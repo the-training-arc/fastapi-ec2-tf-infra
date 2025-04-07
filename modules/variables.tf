@@ -21,3 +21,10 @@ variable "project_name" {
 
   default = "tf-three-tier"
 }
+
+variable "amazon_linux_ami" {
+  type        = string
+  description = "Amazon Linux AMI ID"
+
+  default = "ami-065a492fef70f84b1"
+}

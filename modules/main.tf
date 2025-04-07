@@ -1,11 +1,12 @@
-
 locals {
   resource_prefix = "${var.project_name}-${var.environment}"
 }
 
 resource "aws_vpc" "main_vpc" {
-  cidr_block       = "15.0.0.0/16"
-  instance_tenancy = "default"
+  cidr_block           = "15.0.0.0/16"
+  instance_tenancy     = "default"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
     Name = "${local.resource_prefix}-vpc"
