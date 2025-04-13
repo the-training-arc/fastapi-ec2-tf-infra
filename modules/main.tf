@@ -14,31 +14,11 @@ resource "aws_vpc" "main_vpc" {
 }
 
 # ================================
-# SUBNETS
+# PRIVATE SUBNETS
 # ================================
-resource "aws_subnet" "public_subnet_1" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.0.0/24"
-  availability_zone = "ap-southeast-1a"
-
-  tags = {
-    Name = "${local.resource_prefix}-public-subnet-1"
-  }
-}
-
-resource "aws_subnet" "public_subnet_2" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.1.0/24"
-  availability_zone = "ap-southeast-1b"
-
-  tags = {
-    Name = "${local.resource_prefix}-public-subnet-2"
-  }
-}
-
 resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.2.0/24"
+  cidr_block        = "15.0.0.0/24"
   availability_zone = "ap-southeast-1a"
 
   tags = {
@@ -48,11 +28,44 @@ resource "aws_subnet" "private_subnet_1" {
 
 resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.3.0/24"
+  cidr_block        = "15.0.1.0/24"
   availability_zone = "ap-southeast-1b"
 
   tags = {
     Name = "${local.resource_prefix}-private-subnet-2"
+  }
+}
+
+resource "aws_subnet" "private_subnet_3" {
+  vpc_id            = aws_vpc.main_vpc.id
+  cidr_block        = "15.0.2.0/24"
+  availability_zone = "ap-southeast-1a"
+
+  tags = {
+    Name = "${local.resource_prefix}-private-subnet-3"
+  }
+}
+
+resource "aws_subnet" "private_subnet_4" {
+  vpc_id            = aws_vpc.main_vpc.id
+  cidr_block        = "15.0.3.0/24"
+  availability_zone = "ap-southeast-1b"
+
+  tags = {
+    Name = "${local.resource_prefix}-private-subnet-4"
+  }
+}
+
+# ================================
+# PUBLIC SUBNETS
+# ================================
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id            = aws_vpc.main_vpc.id
+  cidr_block        = "15.0.4.0/24"
+  availability_zone = "ap-southeast-1a"
+
+  tags = {
+    Name = "${local.resource_prefix}-public-subnet-1"
   }
 }
 
@@ -129,16 +142,6 @@ resource "aws_route_table" "private_route_table" {
 # ================================
 # SUBNET ASSOCIATIONS
 # ================================
-resource "aws_route_table_association" "public_subnet_1_association" {
-  subnet_id      = aws_subnet.public_subnet_1.id
-  route_table_id = aws_route_table.public_route_table.id
-}
-
-resource "aws_route_table_association" "public_subnet_2_association" {
-  subnet_id      = aws_subnet.public_subnet_2.id
-  route_table_id = aws_route_table.public_route_table.id
-}
-
 resource "aws_route_table_association" "private_subnet_1_association" {
   subnet_id      = aws_subnet.private_subnet_1.id
   route_table_id = aws_route_table.private_route_table.id
@@ -147,4 +150,19 @@ resource "aws_route_table_association" "private_subnet_1_association" {
 resource "aws_route_table_association" "private_subnet_2_association" {
   subnet_id      = aws_subnet.private_subnet_2.id
   route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "private_subnet_3_association" {
+  subnet_id      = aws_subnet.private_subnet_3.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "private_subnet_4_association" {
+  subnet_id      = aws_subnet.private_subnet_4.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_1_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_route_table.id
 }

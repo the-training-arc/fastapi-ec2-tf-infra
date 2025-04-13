@@ -1,4 +1,6 @@
-# Define security group rules for EC2 instance
+# ================================
+# EC2
+# ================================
 resource "aws_security_group" "ec2_sg" {
   name_prefix = "ec2_sg_"
 
@@ -27,7 +29,9 @@ resource "aws_vpc_security_group_egress_rule" "ec2_egress" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-# Define security group rules for RDS instance
+# ================================
+# RDS
+# ================================
 resource "aws_security_group" "rds_sg" {
   name_prefix = "rds_sg_"
 
@@ -47,3 +51,28 @@ resource "aws_vpc_security_group_egress_rule" "rds_egress" {
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
+
+# ================================
+# LB
+# ================================
+resource "aws_security_group" "lb_sg" {
+  name_prefix = "lb_sg_"
+
+  vpc_id = aws_vpc.main_vpc.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "lb_ingress" {
+  security_group_id = aws_security_group.lb_sg.id
+  ip_protocol       = "tcp"
+  from_port         = 80
+  to_port           = 80
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
+resource "aws_vpc_security_group_egress_rule" "lb_egress" {
+  security_group_id = aws_security_group.lb_sg.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
+
