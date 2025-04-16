@@ -35,3 +35,10 @@ variable "domain_name" {
 
   default = "durianpy.org"
 }
+
+variable "instance_type" {
+  type        = string
+  description = "Instance type for the application."
+
+  default = "t2.micro"
+}

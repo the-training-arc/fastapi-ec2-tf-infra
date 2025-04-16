@@ -37,18 +37,6 @@ resource "aws_lb_target_group" "web_tg" {
   }
 }
 
-# Create target group attachments for both EC2 instances
-resource "aws_lb_target_group_attachment" "web_1_attachment" {
-  target_group_arn = aws_lb_target_group.web_tg.arn
-  target_id        = aws_instance.web_1.id
-  port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "web_2_attachment" {
-  target_group_arn = aws_lb_target_group.web_tg.arn
-  target_id        = aws_instance.web_2.id
-  port             = 80
-}
 
 # Create listener
 resource "aws_lb_listener" "front_end" {

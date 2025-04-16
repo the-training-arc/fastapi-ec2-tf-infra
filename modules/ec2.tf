@@ -1,28 +1,29 @@
-resource "aws_instance" "web_1" {
-  ami                    = var.amazon_linux_ami
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  subnet_id              = aws_subnet.private_subnet_1.id
-  availability_zone      = "ap-southeast-1a"
-  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
+resource "aws_launch_template" "web_launch_template" {
+  name = "${local.resource_prefix}-web-launch-template"
 
-  user_data = file("./modules/init.sh")
-  tags = {
-    Name = "${local.resource_prefix}-web-1"
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ssm_profile.name
   }
-}
 
-resource "aws_instance" "web_2" {
-  ami                    = var.amazon_linux_ami
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  subnet_id              = aws_subnet.private_subnet_2.id
-  availability_zone      = "ap-southeast-1b"
-  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
+  image_id = var.amazon_linux_ami
 
-  user_data = file("./modules/init.sh")
+  instance_initiated_shutdown_behavior = "terminate"
 
-  tags = {
-    Name = "${local.resource_prefix}-web-2"
+  instance_type = var.instance_type
+
+  monitoring {
+    enabled = true
   }
+
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "${local.resource_prefix}-web-launch-template"
+    }
+  }
+
+  user_data = filebase64("${path.module}/init.sh")
 }
