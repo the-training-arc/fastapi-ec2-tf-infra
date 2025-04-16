@@ -11,10 +11,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "pants-poc-terraform-state"
-    key            = "lambda/terraform.tfstate"
-    region         = "ap-southeast-1"
-    dynamodb_table = "pants-poc-terraform-lock"
+    bucket = "durianpy-terraform-state-poc"
+    key    = "tf/terraform.tfstate"
+    region = "ap-southeast-1"
   }
 }
 

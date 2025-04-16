@@ -28,3 +28,10 @@ variable "amazon_linux_ami" {
 
   default = "ami-065a492fef70f84b1"
 }
+
+variable "domain_name" {
+  type        = string
+  description = "Domain name for the application."
+
+  default = "durianpy.org"
+}

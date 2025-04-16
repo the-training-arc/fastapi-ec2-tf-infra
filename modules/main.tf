@@ -69,19 +69,23 @@ resource "aws_subnet" "public_subnet_1" {
   }
 }
 
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = aws_vpc.main_vpc.id
+  cidr_block        = "15.0.5.0/24"
+  availability_zone = "ap-southeast-1b"
+
+  tags = {
+    Name = "${local.resource_prefix}-public-subnet-2"
+  }
+}
+
 # ================================
 # INTERNET GATEWAY
 # ================================
-resource "aws_eip" "main_eip" {
-  domain = "vpc"
-
-  tags = {
-    Name = "${local.resource_prefix}-eip"
-  }
-}
 resource "aws_internet_gateway" "main_igw" {
   vpc_id = aws_vpc.main_vpc.id
 
+  depends_on = [aws_vpc.main_vpc]
   tags = {
     Name = "${local.resource_prefix}-igw"
   }
@@ -164,5 +168,10 @@ resource "aws_route_table_association" "private_subnet_4_association" {
 
 resource "aws_route_table_association" "public_subnet_1_association" {
   subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_2_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_route_table.id
 }
