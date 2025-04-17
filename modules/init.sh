@@ -3,19 +3,19 @@
 # Update the system
 sudo yum update -y
 
-# Install Apache
-sudo yum install httpd -y
+# Install Nginx
+sudo yum install nginx -y
 
 # Create a health check endpoint
-sudo mkdir -p /var/www/html
-echo "OK" | sudo tee /var/www/html/health
-sudo chmod 644 /var/www/html/health
+sudo mkdir -p /usr/share/nginx/html
+echo "OK" | sudo tee /usr/share/nginx/html/health
+sudo chmod 644 /usr/share/nginx/html/health
 
 # Set proper permissions
-sudo chown -R apache:apache /var/www/html
+sudo chown -R nginx:nginx /usr/share/nginx/html
 
-# Start and enable Apache
-sudo systemctl start httpd
-sudo systemctl enable httpd
+# Start and enable Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
 sudo systemctl status amazon-ssm-agent

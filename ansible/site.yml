@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: update & upgrade server
+    yum:
+      name: "*"
+      state: latest
+
+  - name: install nginx
+    yum:
+      name: nginx
+      state: latest
+
+  - name: add hostname to server
+    tags: print
+    shell: echo "<h1>This is my server $(hostname -f)</h1>" > /usr/share/nginx/html/index.html
+
+  - name: restart nginx
+    tags: restart
+    service:
+      name: nginx
+      state: restarted
+      enabled: yes
