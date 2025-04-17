@@ -2,23 +2,51 @@
 - hosts: all
   become: yes
   tasks:
-  - name: update & upgrade server
-    yum:
-      name: "*"
-      state: latest
+      - name: update & upgrade server
+        yum:
+            name: "*"
+            state: latest
 
-  - name: install nginx
-    yum:
-      name: nginx
-      state: latest
+      - name: install nginx
+        yum:
+            name: nginx
+            state: latest
 
-  - name: add hostname to server
-    tags: print
-    shell: echo "<h1>This is my server $(hostname -f)</h1>" > /usr/share/nginx/html/index.html
+      - name: add hostname to server
+        tags: print
+        shell: echo "<h1>This is my server $(hostname -f)</h1>" > /usr/share/nginx/html/index.html
 
-  - name: restart nginx
-    tags: restart
-    service:
-      name: nginx
-      state: restarted
-      enabled: yes
+      - name: restart nginx
+        tags: restart
+        service:
+            name: nginx
+            state: restarted
+            enabled: yes
+
+      - name: install docker
+        yum:
+            name: docker
+            state: latest
+
+      - name: start docker
+        service:
+            name: docker
+
+      - name: install docker-compose
+        pip:
+            name: docker-compose
+            state: latest
+
+      - name: git clone fastapi-repo with SSH
+        git:
+            repo: git@github.com:ArJSarmiento/fastapi-workshop.git
+            dest: /usr/local/bin/docker-compose
+            version: main
+            update: yes
+
+      - name: start docker-compose
+        docker-compose:
+            project_name: fastapi-workshop
+            state: started
+            build: yes
+            force_recreate: yes
