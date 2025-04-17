@@ -36,3 +36,8 @@ module "vpc" {
 locals {
   resource_prefix = "${var.project_name}-${var.environment}"
 }
+
+output "bastion_private_key_pem" {
+  value     = module.vpc.private_key_pem
+  sensitive = true
+}
