@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "${local.resource_prefix}-rds-subnet-group"
-  subnet_ids = [aws_subnet.private_subnet_3.id, aws_subnet.private_subnet_4.id]
+  subnet_ids = [var.private_subnet_3, var.private_subnet_4]
 
   tags = {
     Name = "${local.resource_prefix}-rds-subnet-group"
@@ -23,7 +23,7 @@ resource "aws_db_instance" "rds_instance" {
 
   multi_az = false
 
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  vpc_security_group_ids = [var.rds_security_group_id]
 
   availability_zone = "ap-southeast-1a"
 

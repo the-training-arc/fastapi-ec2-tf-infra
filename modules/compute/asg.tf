@@ -12,7 +12,10 @@ resource "aws_autoscaling_group" "web_asg" {
     version = aws_launch_template.web_launch_template.latest_version
   }
 
-  vpc_zone_identifier = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+  vpc_zone_identifier = [
+    var.private_subnet_1,
+    var.private_subnet_2,
+  ]
 
   instance_refresh {
     strategy = "Rolling"

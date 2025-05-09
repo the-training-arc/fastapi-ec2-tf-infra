@@ -2,9 +2,6 @@ resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_key_pair" "generated_key" {

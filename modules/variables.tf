@@ -4,22 +4,16 @@
 variable "region" {
   type        = string
   description = "AWS region for all resources."
-
-  default = "ap-southeast-1"
 }
 
 variable "environment" {
   type        = string
   description = "Environment for all resources."
-
-  default = "dev"
 }
 
 variable "project_name" {
   type        = string
   description = "Name of the example project."
-
-  default = "tf-three-tier"
 }
 
 variable "amazon_linux_ami" {
@@ -41,4 +35,16 @@ variable "instance_type" {
   description = "Instance type for the application."
 
   default = "t2.micro"
+}
+
+variable "subdomain" {
+  type        = string
+  description = "Subdomain for the application"
+  default     = "poc"
+}
+
+variable "root_domain" {
+  type        = string
+  description = "Root domain name"
+  default     = "durianpy.org"
 }

@@ -4,7 +4,7 @@
 resource "aws_security_group" "ec2_sg" {
   name_prefix = "ec2_sg_"
 
-  vpc_id = aws_vpc.main_vpc.id
+  vpc_id = var.vpc_id
 }
 
 # Allow SSH access from Bastion Host
@@ -51,7 +51,7 @@ resource "aws_vpc_security_group_egress_rule" "ec2_egress_https" {
 resource "aws_security_group" "bastion_sg" {
   name_prefix = "bastion_sg_"
 
-  vpc_id = aws_vpc.main_vpc.id
+  vpc_id = var.vpc_id
 }
 
 # Allow SSH access from your IP
@@ -77,7 +77,7 @@ resource "aws_vpc_security_group_egress_rule" "bastion_egress_ssh" {
 resource "aws_security_group" "rds_sg" {
   name_prefix = "rds_sg_"
 
-  vpc_id = aws_vpc.main_vpc.id
+  vpc_id = var.vpc_id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "rds_ingress" {
@@ -92,7 +92,7 @@ resource "aws_vpc_security_group_ingress_rule" "rds_ingress" {
 resource "aws_vpc_security_group_egress_rule" "rds_egress" {
   security_group_id = aws_security_group.rds_sg.id
   ip_protocol       = "-1"
-  cidr_ipv4         = aws_vpc.main_vpc.cidr_block
+  cidr_ipv4         = var.vpc_cidr_block
   description       = "Allow all outbound traffic within VPC only"
 }
 
@@ -102,7 +102,7 @@ resource "aws_vpc_security_group_egress_rule" "rds_egress" {
 resource "aws_security_group" "lb_sg" {
   name_prefix = "lb_sg_"
 
-  vpc_id = aws_vpc.main_vpc.id
+  vpc_id = var.vpc_id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "lb_ingress" {

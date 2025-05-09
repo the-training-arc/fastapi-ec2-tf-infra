@@ -1,16 +1,4 @@
 # Variable for the subdomain
-variable "subdomain" {
-  type        = string
-  description = "Subdomain for the application"
-  default     = "poc"
-}
-
-variable "root_domain" {
-  type        = string
-  description = "Root domain name"
-  default     = "durianpy.org"
-}
-
 locals {
   full_domain = "${var.subdomain}.${var.root_domain}"
 }
@@ -28,8 +16,8 @@ resource "aws_route53_record" "alb" {
   type    = "A"
 
   alias {
-    name                   = aws_lb.main_alb.dns_name
-    zone_id                = aws_lb.main_alb.zone_id
+    name                   = var.alb_dns_name
+    zone_id                = var.alb_zone_id
     evaluate_target_health = true
   }
 }

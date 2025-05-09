@@ -1,177 +1,65 @@
-locals {
-  resource_prefix = "${var.project_name}-${var.environment}"
-}
-
-resource "aws_vpc" "main_vpc" {
-  cidr_block           = "15.0.0.0/16"
-  instance_tenancy     = "default"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
-  tags = {
-    Name = "${local.resource_prefix}-vpc"
-  }
-}
-
-# ================================
-# PRIVATE SUBNETS
-# ================================
-resource "aws_subnet" "private_subnet_1" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.0.0/24"
-  availability_zone = "ap-southeast-1a"
-
-  tags = {
-    Name = "${local.resource_prefix}-private-subnet-1"
-  }
-}
-
-resource "aws_subnet" "private_subnet_2" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.1.0/24"
-  availability_zone = "ap-southeast-1b"
-
-  tags = {
-    Name = "${local.resource_prefix}-private-subnet-2"
-  }
-}
-
-resource "aws_subnet" "private_subnet_3" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.2.0/24"
-  availability_zone = "ap-southeast-1a"
-
-  tags = {
-    Name = "${local.resource_prefix}-private-subnet-3"
-  }
-}
-
-resource "aws_subnet" "private_subnet_4" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.3.0/24"
-  availability_zone = "ap-southeast-1b"
-
-  tags = {
-    Name = "${local.resource_prefix}-private-subnet-4"
-  }
-}
-
-# ================================
-# PUBLIC SUBNETS
-# ================================
-resource "aws_subnet" "public_subnet_1" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.4.0/24"
-  availability_zone = "ap-southeast-1a"
-
-  tags = {
-    Name = "${local.resource_prefix}-public-subnet-1"
-  }
-}
-
-resource "aws_subnet" "public_subnet_2" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = "15.0.5.0/24"
-  availability_zone = "ap-southeast-1b"
-
-  tags = {
-    Name = "${local.resource_prefix}-public-subnet-2"
-  }
-}
-
-# ================================
-# INTERNET GATEWAY
-# ================================
-resource "aws_internet_gateway" "main_igw" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  depends_on = [aws_vpc.main_vpc]
-  tags = {
-    Name = "${local.resource_prefix}-igw"
-  }
-}
-
-# ================================
-# NAT GATEWAY
-# ================================
-resource "aws_eip" "nat_gateway_eip" {
-  domain = "vpc"
-
-  tags = {
-    Name = "${local.resource_prefix}-nat-gateway-eip"
-  }
-}
-
-resource "aws_nat_gateway" "main_nat_gateway" {
-  subnet_id     = aws_subnet.public_subnet_1.id
-  allocation_id = aws_eip.nat_gateway_eip.id
-
-  tags = {
-    Name = "${local.resource_prefix}-nat-gateway"
-  }
-
-  depends_on = [aws_internet_gateway.main_igw, aws_eip.nat_gateway_eip]
-}
-
-# ================================
-# ROUTE TABLES
-# ================================
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main_igw.id
-  }
-
-  tags = {
-    Name = "${local.resource_prefix}-public-route-table"
-  }
-}
-
-resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main_nat_gateway.id
-  }
-
-  tags = {
-    Name = "${local.resource_prefix}-private-route-table"
-  }
+terraform {
+  required_version = ">= 1.2.0"
 }
 
 
-# ================================
-# SUBNET ASSOCIATIONS
-# ================================
-resource "aws_route_table_association" "private_subnet_1_association" {
-  subnet_id      = aws_subnet.private_subnet_1.id
-  route_table_id = aws_route_table.private_route_table.id
+module "compute" {
+  source           = "./compute"
+  amazon_linux_ami = var.amazon_linux_ami
+  environment      = var.environment
+  instance_type    = var.instance_type
+  project_name     = var.project_name
+
+  # Pass networking resources
+  vpc_id = module.networking.vpc_id
+
+  private_subnet_1 = module.networking.private_subnet_1
+  private_subnet_2 = module.networking.private_subnet_2
+  private_subnet_3 = module.networking.private_subnet_3
+  private_subnet_4 = module.networking.private_subnet_4
+
+  public_subnet_1 = module.networking.public_subnet_1
+  public_subnet_2 = module.networking.public_subnet_2
+  certificate_arn = module.dns.certificate_arn
+
+  # Pass security group IDs
+  ec2_security_group_id     = module.security.ec2_security_group_id
+  bastion_security_group_id = module.security.bastion_security_group_id
+  alb_security_group_id     = module.security.alb_security_group_id
 }
 
-resource "aws_route_table_association" "private_subnet_2_association" {
-  subnet_id      = aws_subnet.private_subnet_2.id
-  route_table_id = aws_route_table.private_route_table.id
+module "networking" {
+  source       = "./networking"
+  project_name = var.project_name
+  environment  = var.environment
 }
 
-resource "aws_route_table_association" "private_subnet_3_association" {
-  subnet_id      = aws_subnet.private_subnet_3.id
-  route_table_id = aws_route_table.private_route_table.id
+module "dns" {
+  source       = "./dns"
+  project_name = var.project_name
+  environment  = var.environment
+  subdomain    = var.subdomain
+  root_domain  = var.root_domain
+  alb_dns_name = module.compute.alb_dns_name
+  alb_zone_id  = module.compute.alb_zone_id
 }
 
-resource "aws_route_table_association" "private_subnet_4_association" {
-  subnet_id      = aws_subnet.private_subnet_4.id
-  route_table_id = aws_route_table.private_route_table.id
+module "security" {
+  source       = "./security"
+  project_name = var.project_name
+  environment  = var.environment
+
+  vpc_id         = module.networking.vpc_id
+  vpc_cidr_block = module.networking.vpc_cidr_block
 }
 
-resource "aws_route_table_association" "public_subnet_1_association" {
-  subnet_id      = aws_subnet.public_subnet_1.id
-  route_table_id = aws_route_table.public_route_table.id
-}
+module "storage" {
+  source       = "./storage"
+  project_name = var.project_name
+  environment  = var.environment
 
-resource "aws_route_table_association" "public_subnet_2_association" {
-  subnet_id      = aws_subnet.public_subnet_2.id
-  route_table_id = aws_route_table.public_route_table.id
+  private_subnet_3 = module.networking.private_subnet_3
+  private_subnet_4 = module.networking.private_subnet_4
+
+  rds_security_group_id = module.security.rds_security_group_id
 }
