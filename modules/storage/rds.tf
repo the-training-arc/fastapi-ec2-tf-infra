@@ -32,4 +32,6 @@ resource "aws_db_instance" "rds_instance" {
   tags = {
     Name = "${local.resource_prefix}-rds"
   }
+
+  depends_on = [var.rds_security_group_id]
 }

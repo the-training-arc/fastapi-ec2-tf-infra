@@ -50,8 +50,6 @@ resource "aws_lb_listener" "front_end" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web_tg.arn
   }
-
-  depends_on = [var.certificate_arn]
 }
 
 # Add HTTP to HTTPS redirect
@@ -69,6 +67,4 @@ resource "aws_lb_listener" "http" {
       status_code = "HTTP_301"
     }
   }
-
-  depends_on = [aws_lb_listener.front_end]
 }
