@@ -38,3 +38,8 @@ terraform
 
 .venv
 .vscode
+
+*.pem
+*.crt
+*.key
+*.csr

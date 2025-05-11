@@ -17,17 +17,18 @@ resource "aws_launch_template" "web_launch_template" {
 
   vpc_security_group_ids = [var.ec2_security_group_id]
 
+  key_name = aws_key_pair.generated_key.key_name
+
+  user_data = filebase64("${path.module}/init.sh")
+
   tag_specifications {
     resource_type = "instance"
 
     tags = {
       Name = "${local.resource_prefix}-web-launch-template"
+      Role = "application"
     }
   }
-
-  key_name = aws_key_pair.generated_key.key_name
-
-  user_data = filebase64("${path.module}/init.sh")
 }
 
 resource "aws_instance" "bastion_host" {
@@ -41,5 +42,6 @@ resource "aws_instance" "bastion_host" {
 
   tags = {
     Name = "${local.resource_prefix}-bastion-host"
+    Role = "bastion"
   }
 }

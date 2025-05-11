@@ -63,3 +63,24 @@ module "storage" {
 
   rds_security_group_id = module.security.rds_security_group_id
 }
+
+resource "local_file" "private_key" {
+  content         = module.compute.private_key_pem
+  filename        = "${path.module}/private_key.pem"
+  file_permission = "0600"
+}
+
+resource "null_resource" "ansible" {
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --inventory ansible/aws_ec2.yml --user ec2-user ansible/site.yml --private-key ${path.module}/private_key.pem"
+  }
+
+  triggers = {
+    always_run = timestamp()
+  }
+
+  depends_on = [
+    module.compute,
+    local_file.private_key
+  ]
+}

@@ -1,0 +1,20 @@
+---
+plugin: aws_ec2
+
+regions:
+  - ap-southeast-1
+
+hostnames:
+  - ip-address
+
+include_filters:
+  - tag:Environment: dev
+  - tag:Project: fastproj-infra
+  - tag:Role: bastion
+
+filters:
+  instance-state-name: running
+
+leading_separator: false
+keyed_groups:
+  - key: tags.Role

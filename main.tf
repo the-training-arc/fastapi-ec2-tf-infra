@@ -24,6 +24,7 @@ provider "aws" {
     tags = {
       Environment = var.environment
       Service     = "${local.resource_prefix}"
+      Project     = var.project_name
       Terraform   = "true"
     }
   }
@@ -42,5 +43,10 @@ module "infra" {
 
 output "bastion_private_key_pem" {
   value     = module.infra.bastion_private_key_pem
+  sensitive = true
+}
+
+output "private_key_pem" {
+  value     = module.infra.private_key_pem
   sensitive = true
 }
