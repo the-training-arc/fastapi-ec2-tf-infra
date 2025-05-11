@@ -72,7 +72,7 @@ resource "local_file" "private_key" {
 
 resource "null_resource" "ansible" {
   provisioner "local-exec" {
-    command = "cd ansible && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --inventory inventory.aws_ec2.yml site.yml --private-key ${path.module}/../private_key.pem"
+    command = "cd ansible && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --inventory inventory.aws_ec2.yml site.yml"
   }
 
   triggers = {
