@@ -14,6 +14,7 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_ingress_ssh_bastion" {
   from_port                    = 22
   to_port                      = 22
   referenced_security_group_id = aws_security_group.bastion_sg.id
+  description                  = "Allow SSH inbound traffic from Bastion Host"
 }
 
 # Allow HTTP access from ALB
@@ -26,23 +27,11 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_ingress_http_alb" {
   description                  = "Allow HTTP traffic from ALB only"
 }
 
-# Restrict egress to only necessary outbound traffic
-resource "aws_vpc_security_group_egress_rule" "ec2_egress_http" {
+resource "aws_vpc_security_group_egress_rule" "ec2_egress_all" {
   security_group_id = aws_security_group.ec2_sg.id
-  ip_protocol       = "tcp"
-  from_port         = 80
-  to_port           = 80
+  ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
-  description       = "Allow HTTP outbound traffic"
-}
-
-resource "aws_vpc_security_group_egress_rule" "ec2_egress_https" {
-  security_group_id = aws_security_group.ec2_sg.id
-  ip_protocol       = "tcp"
-  from_port         = 443
-  to_port           = 443
-  cidr_ipv4         = "0.0.0.0/0"
-  description       = "Allow HTTPS outbound traffic"
+  description       = "Allow all outbound traffic"
 }
 
 # ================================

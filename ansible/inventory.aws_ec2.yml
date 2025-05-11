@@ -1,0 +1,29 @@
+plugin: aws_ec2
+regions:
+  - ap-southeast-1
+
+filters:
+  instance-state-name: running
+  "tag:Environment": dev
+  "tag:Project": fastproj-infra
+
+hostnames:
+  - private_ip_address
+
+compose:
+  ansible_host: private_ip_address
+  ansible_user: ec2-user
+  ansible_ssh_private_key_file: ~/.ssh/private_key.pem
+
+keyed_groups:
+  - key: tags.Role
+    prefix: ""
+
+groups:
+  private: "'application' in (tags.Role|default(''))"
+  bastion: "'bastion' in (tags.Role|default(''))"
+
+hostvars:
+  private:
+    ansible_ssh_common_args: >-
+      -o ProxyCommand="ssh -W %h:%p -q -i ~/.ssh/private_key.pem ec2-user@{{ hostvars[groups['bastion'][0]]['public_ip_address'] }}"
