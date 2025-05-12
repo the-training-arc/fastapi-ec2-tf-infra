@@ -4,10 +4,10 @@ output "bastion_private_key_pem" {
 }
 
 output "alb_dns_name" {
-  value = aws_lb.main_alb.dns_name
+  value = aws_lb.main.dns_name
 }
 
 output "alb_zone_id" {
-  value = aws_lb.main_alb.zone_id
+  value = aws_lb.main.zone_id
 }
 
