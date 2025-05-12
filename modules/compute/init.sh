@@ -25,16 +25,18 @@ git clone https://github.com/ArJSarmiento/fastapi-workshop fastapi-app
 cd fastapi-app
 
 # Example fetching from Parameter Store
-DB_URL=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/url" --with-decryption --query "Parameter.Value" --output text)
+DB_HOST=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/url" --with-decryption --query "Parameter.Value" --output text)
 DB_USER=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/user" --with-decryption --query "Parameter.Value" --output text)
 DB_PASSWORD=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/password" --with-decryption --query "Parameter.Value" --output text)
+DB_NAME=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/name" --with-decryption --query "Parameter.Value" --output text)
 
 # Write to .env
 cat <<EOF > /home/ec2-user/fastapi-app/.env
 ENV=$ENVIRONMENT
 POSTGRES_USER=$DB_USER
 POSTGRES_PASSWORD=$DB_PASSWORD
-POSTGRES_DB=$DB_URL
+POSTGRES_DB=$DB_NAME
+POSTGRES_HOST=$DB_HOST
 EOF
 
 # Start the application using Docker Compose

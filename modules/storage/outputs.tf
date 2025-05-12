@@ -13,3 +13,11 @@ output "rds_instance_username" {
 output "rds_instance_password" {
   value = aws_db_instance.rds_instance.password
 }
+
+output "rds_instance_arn" {
+  value = aws_db_instance.rds_instance.arn
+}
+
+output "rds_instance_name" {
+  value = aws_db_instance.rds_instance.db_name
+}

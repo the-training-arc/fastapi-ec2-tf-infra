@@ -18,3 +18,10 @@ resource "aws_ssm_parameter" "db_password" {
   type        = "SecureString"
   value       = var.database_password
 }
+
+resource "aws_ssm_parameter" "db_name" {
+  name        = "/${var.project_name}/${var.environment}/database/name"
+  description = "The parameter description"
+  type        = "SecureString"
+  value       = var.database_name
+}

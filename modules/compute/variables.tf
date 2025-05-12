@@ -73,3 +73,8 @@ variable "certificate_arn" {
   description = "The ARN of the ALB certificate"
   type        = string
 }
+
+variable "rds_instance_arn" {
+  description = "The ARN of the RDS instance"
+  type        = string
+}

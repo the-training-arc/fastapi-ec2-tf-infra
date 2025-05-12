@@ -26,6 +26,8 @@ module "compute" {
   ec2_security_group_id     = module.security.ec2_security_group_id
   bastion_security_group_id = module.security.bastion_security_group_id
   alb_security_group_id     = module.security.alb_security_group_id
+
+  rds_instance_arn = module.storage.rds_instance_arn
 }
 
 module "networking" {
@@ -72,6 +74,7 @@ module "secrets" {
   database_url      = module.storage.rds_instance_address
   database_user     = module.storage.rds_instance_username
   database_password = module.storage.rds_instance_password
+  database_name     = module.storage.rds_instance_name
 }
 
 resource "local_file" "private_key" {

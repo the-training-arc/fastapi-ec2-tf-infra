@@ -18,15 +18,15 @@ resource "aws_db_instance" "rds_instance" {
   identifier = "${local.resource_prefix}-rds"
 
   allocated_storage = 5
-  storage_type      = "gp3"
+  storage_type      = "gp2"
   storage_encrypted = true
 
   engine         = "postgres"
   engine_version = "16.6"
   instance_class = "db.t4g.micro"
 
-  username = jsondecode(data.aws_secretsmanager_secret_version.rds_credentials.secret_string)["username"]
-  password = jsondecode(data.aws_secretsmanager_secret_version.rds_credentials.secret_string)["password"]
+  username = "dbadmin"
+  password = random_password.rds_password.result
 
   multi_az            = false
   publicly_accessible = false
