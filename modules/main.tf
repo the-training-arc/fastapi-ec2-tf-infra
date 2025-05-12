@@ -70,17 +70,17 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-resource "null_resource" "ansible" {
-  provisioner "local-exec" {
-    command = "cd ansible && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --inventory inventory.aws_ec2.yml site.yml"
-  }
+# resource "null_resource" "ansible" {
+#   provisioner "local-exec" {
+#     command = "cd ansible && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --inventory inventory.aws_ec2.yml site.yml"
+#   }
 
-  triggers = {
-    always_run = timestamp()
-  }
+#   triggers = {
+#     always_run = timestamp()
+#   }
 
-  depends_on = [
-    module.compute,
-    local_file.private_key
-  ]
-}
+#   depends_on = [
+#     module.compute,
+#     local_file.private_key
+#   ]
+# }

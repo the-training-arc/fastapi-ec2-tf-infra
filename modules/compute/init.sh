@@ -1,21 +1,43 @@
 #!/bin/bash
 
+exec > /var/log/user-data.log 2>&1
+set -x
+
 # Update the system
 sudo yum update -y
 
-# Install Nginx
-sudo yum install nginx -y
+# Install Docker
+sudo yum install -y docker
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ec2-user
 
-# Create a health check endpoint
-sudo mkdir -p /usr/share/nginx/html
-echo "OK" | sudo tee /usr/share/nginx/html/health
-sudo chmod 644 /usr/share/nginx/html/health
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
-# Set proper permissions
-sudo chown -R nginx:nginx /usr/share/nginx/html
+# Install Git
+sudo yum install -y git
 
-# Start and enable Nginx
-sudo systemctl start nginx
-sudo systemctl enable nginx
+# Clone your FastAPI project
+cd /home/ec2-user
+git clone https://github.com/ArJSarmiento/fastapi-workshop fastapi-app
+cd fastapi-app
+
+# Example fetching from Parameter Store
+DB_URL=$(aws ssm get-parameter --name "/fastapi-app/database_url" --with-decryption --query "Parameter.Value" --output text)
+
+# Write to .env
+cat <<EOF > /home/ec2-user/fastapi-app/.env
+ENV=production
+POSTGRES_USER=$DB_URL
+POSTGRES_PASSWORD=$DB_URL
+POSTGRES_DB=$DB_URL
+EOF
+
+# Start the application using Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
 
 sudo systemctl status amazon-ssm-agent
+
+sudo systemctl status docker
