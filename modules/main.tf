@@ -64,6 +64,16 @@ module "storage" {
   rds_security_group_id = module.security.rds_security_group_id
 }
 
+module "secrets" {
+  source       = "./secrets"
+  project_name = var.project_name
+  environment  = var.environment
+
+  database_url      = module.storage.rds_instance_address
+  database_user     = module.storage.rds_instance_username
+  database_password = module.storage.rds_instance_password
+}
+
 resource "local_file" "private_key" {
   content         = module.compute.private_key_pem
   filename        = "${path.module}/private_key.pem"

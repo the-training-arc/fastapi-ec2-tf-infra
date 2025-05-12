@@ -19,7 +19,10 @@ resource "aws_launch_template" "web_launch_template" {
 
   key_name = aws_key_pair.generated_key.key_name
 
-  user_data = filebase64("${path.module}/init.sh")
+  user_data = base64encode(templatefile("${path.module}/init.sh", {
+    ENVIRONMENT  = var.environment
+    PROJECT_NAME = var.project_name
+  }))
 
   tag_specifications {
     resource_type = "instance"

@@ -25,13 +25,15 @@ git clone https://github.com/ArJSarmiento/fastapi-workshop fastapi-app
 cd fastapi-app
 
 # Example fetching from Parameter Store
-DB_URL=$(aws ssm get-parameter --name "/fastapi-app/database_url" --with-decryption --query "Parameter.Value" --output text)
+DB_URL=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/url" --with-decryption --query "Parameter.Value" --output text)
+DB_USER=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/user" --with-decryption --query "Parameter.Value" --output text)
+DB_PASSWORD=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/password" --with-decryption --query "Parameter.Value" --output text)
 
 # Write to .env
 cat <<EOF > /home/ec2-user/fastapi-app/.env
-ENV=production
-POSTGRES_USER=$DB_URL
-POSTGRES_PASSWORD=$DB_URL
+ENV=$ENVIRONMENT
+POSTGRES_USER=$DB_USER
+POSTGRES_PASSWORD=$DB_PASSWORD
 POSTGRES_DB=$DB_URL
 EOF
 

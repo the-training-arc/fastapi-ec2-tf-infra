@@ -7,31 +7,39 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   }
 }
 
+resource "random_password" "rds_password" {
+  length           = 32
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "aws_db_instance" "rds_instance" {
   db_name    = "treeTier${var.environment}treeTierRDS"
   identifier = "${local.resource_prefix}-rds"
 
   allocated_storage = 5
-  engine            = "mysql"
-  engine_version    = "8.0.40"
-  instance_class    = "db.t4g.micro"
+  storage_type      = "gp3"
+  storage_encrypted = true
 
-  username = "admin"
-  password = "RUimA5XVjrFhYHFZ99tbh6D3TEypsgzi"
+  engine         = "postgres"
+  engine_version = "16.6"
+  instance_class = "db.t4g.micro"
 
-  skip_final_snapshot = true
+  username = jsondecode(data.aws_secretsmanager_secret_version.rds_credentials.secret_string)["username"]
+  password = jsondecode(data.aws_secretsmanager_secret_version.rds_credentials.secret_string)["password"]
 
-  multi_az = false
+  multi_az            = false
+  publicly_accessible = false
+  skip_final_snapshot = false
+  deletion_protection = false
+
+  backup_retention_period = 7
+  backup_window           = "03:00-04:00"
+  maintenance_window      = "Mon:04:00-Mon:05:00"
+
 
   vpc_security_group_ids = [var.rds_security_group_id]
-
-  availability_zone = "ap-southeast-1a"
-
-  db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
-
-  tags = {
-    Name = "${local.resource_prefix}-rds"
-  }
+  db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
 
   depends_on = [var.rds_security_group_id]
 }
