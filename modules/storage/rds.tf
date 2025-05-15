@@ -8,9 +8,8 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 }
 
 resource "random_password" "rds_password" {
-  length           = 32
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  length  = 32
+  special = false
 }
 
 resource "aws_db_instance" "rds_instance" {
@@ -30,7 +29,7 @@ resource "aws_db_instance" "rds_instance" {
 
   multi_az            = false
   publicly_accessible = false
-  skip_final_snapshot = false
+  skip_final_snapshot = true
   deletion_protection = false
 
   backup_retention_period = 7

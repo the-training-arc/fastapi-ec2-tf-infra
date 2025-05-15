@@ -72,10 +72,10 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_vpc_security_group_ingress_rule" "rds_ingress" {
   security_group_id            = aws_security_group.rds_sg.id
   ip_protocol                  = "tcp"
-  from_port                    = 3306
-  to_port                      = 3306
+  from_port                    = 5432
+  to_port                      = 5432
   referenced_security_group_id = aws_security_group.ec2_sg.id
-  description                  = "Allow MySQL access from EC2 instances only"
+  description                  = "Allow PostgreSQL access from EC2 instances only"
 }
 
 resource "aws_vpc_security_group_egress_rule" "rds_egress" {

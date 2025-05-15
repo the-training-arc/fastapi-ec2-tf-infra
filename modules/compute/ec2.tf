@@ -39,7 +39,7 @@ resource "aws_instance" "bastion_host" {
   instance_type               = var.instance_type
   subnet_id                   = var.public_subnet_1
   vpc_security_group_ids      = [var.bastion_security_group_id]
-  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  iam_instance_profile        = aws_iam_instance_profile.bastion.name
   key_name                    = aws_key_pair.generated_key.key_name
   associate_public_ip_address = true
 

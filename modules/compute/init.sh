@@ -32,11 +32,7 @@ DB_NAME=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database
 
 # Write to .env
 cat <<EOF > /home/ec2-user/fastapi-app/.env
-ENV=$ENVIRONMENT
-POSTGRES_USER=$DB_USER
-POSTGRES_PASSWORD=$DB_PASSWORD
-POSTGRES_DB=$DB_NAME
-POSTGRES_HOST=$DB_HOST
+DATABASE_URL=postgresql+psycopg2://$DB_USER:$DB_PASSWORD@$DB_HOST:5432/$DB_NAME
 EOF
 
 # Start the application using Docker Compose
