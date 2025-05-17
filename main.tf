@@ -11,7 +11,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "durianpy-terraform-state"
+    bucket = "durianpy-infra-terraform-state"
     key    = "tf/terraform.tfstate"
     region = "ap-southeast-1"
   }
