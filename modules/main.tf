@@ -53,6 +53,13 @@ module "security" {
 
   vpc_id         = module.networking.vpc_id
   vpc_cidr_block = module.networking.vpc_cidr_block
+
+  public_subnet_1  = module.networking.public_subnet_1
+  public_subnet_2  = module.networking.public_subnet_2
+  private_subnet_1 = module.networking.private_subnet_1
+  private_subnet_2 = module.networking.private_subnet_2
+  private_subnet_3 = module.networking.private_subnet_3
+  private_subnet_4 = module.networking.private_subnet_4
 }
 
 module "storage" {
