@@ -78,3 +78,8 @@ variable "rds_instance_arn" {
   description = "The ARN of the RDS instance"
   type        = string
 }
+
+variable "ecr_repository_url" {
+  description = "The URL of the ECR repository"
+  type        = string
+}

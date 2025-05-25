@@ -1,3 +1,6 @@
+/* -------------------------------------------------------------------------- */
+/*                              Web Instance Role                             */
+/* -------------------------------------------------------------------------- */
 resource "aws_iam_role" "ssm_role" {
   name = "${local.resource_prefix}-ssm-role"
 
@@ -33,6 +36,11 @@ resource "aws_iam_role_policy_attachment" "rds_attach" {
 resource "aws_iam_role_policy_attachment" "ssm_parameter_store_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.ssm_parameter_store_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
 resource "aws_iam_policy" "rds_policy" {
@@ -81,6 +89,9 @@ resource "aws_iam_instance_profile" "ssm_profile" {
   role = aws_iam_role.ssm_role.name
 }
 
+/* -------------------------------------------------------------------------- */
+/*                              Bastion Instance Role                          */
+/* -------------------------------------------------------------------------- */
 resource "aws_iam_role" "bastion_role" {
   name = "${local.resource_prefix}-bastion-role"
 

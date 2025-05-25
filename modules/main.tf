@@ -27,7 +27,8 @@ module "compute" {
   bastion_security_group_id = module.security.bastion_security_group_id
   alb_security_group_id     = module.security.alb_security_group_id
 
-  rds_instance_arn = module.storage.rds_instance_arn
+  rds_instance_arn   = module.storage.rds_instance_arn
+  ecr_repository_url = module.ecr.ecr_repository_url
 }
 
 module "networking" {
@@ -71,6 +72,23 @@ module "storage" {
   private_subnet_4 = module.networking.private_subnet_4
 
   rds_security_group_id = module.security.rds_security_group_id
+}
+
+module "ecr" {
+  source       = "./ecr"
+  project_name = var.project_name
+  environment  = var.environment
+}
+
+module "code_pipeline" {
+  source                 = "./code_pipeline"
+  project_name           = var.project_name
+  environment            = var.environment
+  region                 = var.region
+  autoscaling_group_name = module.compute.autoscaling_group_name
+  alb_target_group_name  = module.compute.alb_target_group_name
+  ecr_repository_url     = module.ecr.ecr_repository_url
+  ecr_repository_name    = module.ecr.ecr_repository_name
 }
 
 module "secrets" {

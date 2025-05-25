@@ -11,3 +11,10 @@ output "alb_zone_id" {
   value = aws_lb.main.zone_id
 }
 
+output "autoscaling_group_name" {
+  value = aws_autoscaling_group.web_asg.name
+}
+
+output "alb_target_group_name" {
+  value = aws_lb_target_group.web_tg.name
+}

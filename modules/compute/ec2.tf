@@ -20,8 +20,9 @@ resource "aws_launch_template" "web_launch_template" {
   key_name = aws_key_pair.generated_key.key_name
 
   user_data = base64encode(templatefile("${path.module}/init.sh", {
-    ENVIRONMENT  = var.environment
-    PROJECT_NAME = var.project_name
+    ENVIRONMENT        = var.environment
+    PROJECT_NAME       = var.project_name
+    ECR_REPOSITORY_URL = var.ecr_repository_url
   }))
 
   tag_specifications {
