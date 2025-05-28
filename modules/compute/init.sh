@@ -52,6 +52,10 @@ aws ecr get-login-password --region ap-southeast-1 |
 # Start the application using Docker Compose
 docker-compose -f docker-compose.prod.yml up -d
 
-sudo systemctl status amazon-ssm-agent
-
-sudo systemctl status docker
+# Install CodeDeploy Agent
+sudo yum install ruby wget -y
+cd /home/ec2-user
+wget https://aws-codedeploy-ap-southeast-1.s3.ap-southeast-1.amazonaws.com/latest/install
+chmod +x ./install
+sudo ./install auto
+sudo service codedeploy-agent start

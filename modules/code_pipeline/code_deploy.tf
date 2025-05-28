@@ -8,7 +8,7 @@ resource "aws_codedeploy_deployment_config" "main" {
 
   minimum_healthy_hosts {
     type  = "HOST_COUNT"
-    value = 2
+    value = 1
   }
 }
 
@@ -39,16 +39,16 @@ resource "aws_codedeploy_deployment_group" "main" {
 
   blue_green_deployment_config {
     deployment_ready_option {
-      action_on_timeout    = "STOP_DEPLOYMENT"
-      wait_time_in_minutes = 60
+      action_on_timeout = "CONTINUE_DEPLOYMENT"
     }
 
     green_fleet_provisioning_option {
-      action = "DISCOVER_EXISTING"
+      action = "COPY_AUTO_SCALING_GROUP"
     }
 
     terminate_blue_instances_on_deployment_success {
-      action = "KEEP_ALIVE"
+      action                           = "TERMINATE"
+      termination_wait_time_in_minutes = 5
     }
   }
 }

@@ -4,4 +4,6 @@ resource "aws_s3_bucket" "codepipeline_location" {
   tags = {
     Name = "Code Pipeline Location"
   }
+
+  force_destroy = true
 }

@@ -16,3 +16,16 @@ resource "aws_cloudwatch_log_group" "flow_log_group" {
 
   skip_destroy = false
 }
+
+resource "null_resource" "delete_log_group" {
+  depends_on = [aws_cloudwatch_log_group.flow_log_group]
+
+  triggers = {
+    log_group_name = "${local.resource_prefix}-flow-log-group"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "aws logs delete-log-group --log-group-name ${self.triggers.log_group_name}"
+  }
+}

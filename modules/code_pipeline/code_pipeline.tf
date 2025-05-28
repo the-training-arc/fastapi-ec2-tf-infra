@@ -54,6 +54,7 @@ resource "aws_codepipeline" "main" {
       provider        = "CodeDeploy"
       input_artifacts = ["build_output"]
       version         = "1"
+      role_arn        = aws_iam_role.codepipeline_role.arn
 
       configuration = {
         ApplicationName     = aws_codedeploy_app.main.name

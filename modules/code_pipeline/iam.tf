@@ -10,7 +10,8 @@ resource "aws_iam_role" "codepipeline_role" {
           Service = [
             "codepipeline.amazonaws.com",
             "codebuild.amazonaws.com",
-            "codedeploy.amazonaws.com"
+            "codedeploy.amazonaws.com",
+            "autoscaling.amazonaws.com"
           ]
         }
         Action = "sts:AssumeRole"
@@ -60,23 +61,18 @@ resource "aws_iam_policy" "codepipeline_policy" {
       {
         Effect = "Allow"
         Action = [
-          "autoscaling:CompleteLifecycleAction",
-          "autoscaling:DeleteLifecycleHook",
-          "autoscaling:DescribeAutoScalingGroups",
-          "autoscaling:DescribeLifecycleHooks",
-          "autoscaling:PutLifecycleHook",
-          "autoscaling:RecordLifecycleActionHeartbeat",
-          "autoscaling:CreateAutoScalingGroup",
-          "autoscaling:UpdateAutoScalingGroup",
-          "autoscaling:EnableMetricsCollection",
-          "autoscaling:DescribePolicies",
-          "autoscaling:DescribeScheduledActions",
-          "autoscaling:DescribeNotificationConfigurations",
-          "autoscaling:SuspendProcesses",
-          "autoscaling:ResumeProcesses",
-          "autoscaling:AttachLoadBalancers",
-          "autoscaling:DetachLoadBalancers",
-          "autoscaling:PutScalingPolicy"
+          "autoscaling:*"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceStatus",
+          "ec2:RunInstances",
+          "ec2:TerminateInstances",
+          "ec2:CreateTags",
         ]
         Resource = "*"
       },
@@ -116,11 +112,19 @@ resource "aws_iam_policy" "codepipeline_policy" {
       {
         Effect = "Allow"
         Action = [
-            "codeconnections:GetConnection",
-            "codeconnections:ListConnections",
-            "codeconnections:ListInstallationTargets",
-            "codeconnections:GetInstallationUrl",
-            "codeconnections:ListTagsForResource"
+          "codeconnections:GetConnection",
+          "codeconnections:ListConnections",
+          "codeconnections:ListInstallationTargets",
+          "codeconnections:GetInstallationUrl",
+          "codeconnections:ListTagsForResource"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "tag:GetTags",
+          "tag:GetResources"
         ]
         Resource = "*"
       },
@@ -159,6 +163,26 @@ resource "aws_iam_policy" "codepipeline_policy" {
           "ssm:DescribeParameters"
         ]
         Resource = "arn:aws:ssm:*:${data.aws_caller_identity.current.account_id}:parameter/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:PassRole"
+        ]
+        Resource = "*"
+      },
+      # Elastic Load Balancing permissions for CodeDeploy
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:ModifyTargetGroup",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:DescribeTargetHealth"
+        ]
+        Resource = "*"
       }
     ]
   })
