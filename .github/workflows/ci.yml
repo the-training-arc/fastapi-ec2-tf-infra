@@ -22,11 +22,15 @@ jobs:
         id: fmt
         run: terraform fmt -check
 
-      - name: Install Trivy
+      - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@0.28.0
-
-      - name: Run Trivy config scan on Terraform
-        run: trivy config --exit-code 1 --severity HIGH,CRITICAL .
+        with:
+          scan-type: 'config'
+          hide-progress: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
 
       - name: Terraform Init
         id: init
