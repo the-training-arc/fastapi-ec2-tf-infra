@@ -19,9 +19,10 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = "arn:aws:codeconnections:ap-southeast-1:682033466856:connection/83112101-2b68-4f61-a07c-521d4c5bd690"
-        FullRepositoryId = "ArJSarmiento/fastapi-workshop"
-        BranchName       = "main"
+        ConnectionArn        = "arn:aws:codeconnections:ap-southeast-1:682033466856:connection/b0ed6047-2dec-4841-aa16-01484adfddc7"
+        FullRepositoryId     = "the-training-arc/fastapi-containerized"
+        BranchName           = "main"
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
   }
@@ -40,6 +41,22 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         ProjectName = aws_codebuild_project.main.name
+      }
+    }
+  }
+
+  stage {
+    name = "Approval"
+
+    action {
+      name     = "Approval"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
+
+      configuration = {
+        CustomData = "Please review and approve the changes."
       }
     }
   }
