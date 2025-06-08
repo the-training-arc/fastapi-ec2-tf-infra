@@ -46,10 +46,15 @@ resource "aws_instance" "bastion_host" {
   vpc_security_group_ids      = [var.bastion_security_group_id]
   iam_instance_profile        = aws_iam_instance_profile.bastion.name
   key_name                    = aws_key_pair.generated_key.key_name
-  associate_public_ip_address = true
+  associate_public_ip_address = false
+
+  root_block_device {
+    encrypted = true
+  }
 
   metadata_options {
-    http_tokens = "required"
+    http_tokens            = "required"
+    instance_metadata_tags = "enabled"
   }
 
   tags = {

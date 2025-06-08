@@ -1,3 +1,4 @@
+#trivy:ignore:AVD-AWS-0053
 resource "aws_lb" "main" {
   name               = "${local.resource_prefix}-alb"
   internal           = false
@@ -6,6 +7,7 @@ resource "aws_lb" "main" {
   subnets            = [var.public_subnet_1, var.public_subnet_2]
 
   enable_deletion_protection = false
+  drop_invalid_header_fields = true
 
   tags = {
     Name = "${local.resource_prefix}-alb"

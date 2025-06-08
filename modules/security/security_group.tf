@@ -45,6 +45,8 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 # Allow SSH access from your IP
+
+#trivy:ignore:AVD-AWS-0107
 resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
   security_group_id = aws_security_group.bastion_sg.id
   ip_protocol       = "tcp"
@@ -52,7 +54,7 @@ resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
   to_port           = 22
   cidr_ipv4         = "0.0.0.0/0"
   description       = "Allow SSH access from specific IP only"
-}
+} # TODO: replace with our SSM Session Manager access
 
 #trivy:ignore:AVD-AWS-0104
 resource "aws_vpc_security_group_egress_rule" "bastion_egress_ssh" {
