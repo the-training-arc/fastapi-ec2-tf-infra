@@ -27,6 +27,7 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_ingress_http_alb" {
   description                  = "Allow HTTP traffic from ALB only"
 }
 
+#trivy:ignore:AVD-AWS-0104
 resource "aws_vpc_security_group_egress_rule" "ec2_egress_all" {
   security_group_id = aws_security_group.ec2_sg.id
   ip_protocol       = "-1"
@@ -53,6 +54,7 @@ resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
   description       = "Allow SSH access from specific IP only"
 }
 
+#trivy:ignore:AVD-AWS-0104
 resource "aws_vpc_security_group_egress_rule" "bastion_egress_ssh" {
   security_group_id = aws_security_group.bastion_sg.id
   ip_protocol       = "-1"

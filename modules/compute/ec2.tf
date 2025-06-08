@@ -19,6 +19,10 @@ resource "aws_launch_template" "web_launch_template" {
 
   key_name = aws_key_pair.generated_key.key_name
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   user_data = base64encode(templatefile("${path.module}/init.sh", {
     ENVIRONMENT        = var.environment
     PROJECT_NAME       = var.project_name
@@ -43,6 +47,10 @@ resource "aws_instance" "bastion_host" {
   iam_instance_profile        = aws_iam_instance_profile.bastion.name
   key_name                    = aws_key_pair.generated_key.key_name
   associate_public_ip_address = true
+
+  metadata_options {
+    http_tokens = "required"
+  }
 
   tags = {
     Name = "${local.resource_prefix}-bastion-host"
